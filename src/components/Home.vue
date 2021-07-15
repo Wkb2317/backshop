@@ -1,24 +1,38 @@
 <template>
-  <div>
-    <el-button type="info" round @click="quit">退出</el-button>
-  </div>
+  <el-container class="home-container">
+    <el-header>
+      <home-header></home-header>
+    </el-header>
+    <el-container>
+      <home-aside></home-aside>
+      <home-main></home-main>
+    </el-container>
+  </el-container>
 </template>
 <script>
+import HomeAside from './HomeChilds/HomeAside.vue'
+import HomeHeader from './HomeChilds/HomeHeader.vue'
+import HomeMain from './HomeChilds/HomeMain.vue'
 export default {
   name: 'Home',
   data() {
     return {}
   },
-  methods: {
-    //退出按钮被点击
-    quit() {
-      // 清空token
-      window.sessionStorage.clear()
-      // 跳转到login页面
-      this.$router.push('/login')
-    },
+  components: {
+    HomeHeader,
+    HomeAside,
+    HomeMain,
   },
+  methods: {},
 }
 </script>
 <style lang="less" scoped>
+.home-container {
+  height: 100%;
+}
+
+.el-header {
+  background-color: rgba(36, 172, 242);
+  color: white;
+}
 </style>

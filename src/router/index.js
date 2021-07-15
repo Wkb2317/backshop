@@ -5,6 +5,8 @@ Vue.use(VueRouter)
 
 const Login = () => import('components/Login.vue')
 const Home = () => import('components/Home.vue')
+const Welcome = () => import('components/HomeChilds/Welcome.vue')
+const Users = () => import('views/Users/Users.vue')
 
 const routes = [
   {
@@ -17,7 +19,19 @@ const routes = [
   },
   {
     path: '/home',
-    component: Home
+    // 进到home，就显示welcome界面
+    redirect: '/welcome',
+    component: Home,
+    children: [
+      {
+        path: '/welcome',
+        component: Welcome
+      },
+      {
+        path: '/users',
+        component: Users
+      }
+    ]
   }
 ]
 
@@ -28,6 +42,7 @@ const router = new VueRouter({
 })
 
 // 路由导航守卫
+// 防止不登录直接访问后台页面
 router.beforeEach((to, from, next) => {
   //console.log(to.path);
   // to是将要去的路径

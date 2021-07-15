@@ -64,12 +64,13 @@ export default {
         }
         // 发送网络请求
         let { data } = await this.$http.post('login', this.loginForm)
+        //console.log(data)
         // 判断状态码
         if (data.meta.status !== 200) {
           return this.$message.error('登录失败')
         }
         this.$message.success('登录成功')
-        //console.log(data);
+        // 存储token
         window.sessionStorage.setItem('token', data.data.token)
         this.$router.push('/home')
       })
