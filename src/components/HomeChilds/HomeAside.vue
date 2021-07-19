@@ -2,6 +2,7 @@
   <el-aside :width=" !isCollapse ? '200px' : '65px'">
     <div class="aside">
       <div class="toggo" @click="toggoclick">|||</div>
+      <!-- 开启路由模式 -->
       <el-menu :default-active="activeNav" class="el-menu-vertical-demo" :unique-opened="true" :collapse-transition="false" :collapse="isCollapse" :router="true">
 
         <!-- submenu 是一级菜单 -->
@@ -45,7 +46,7 @@ export default {
       },
       // 是否折叠与展开
       isCollapse: false,
-      //
+      // 当前被点击的二级列表
       activeNav: '',
     }
   },
@@ -66,7 +67,7 @@ export default {
       }
       // 若果状态码是200，则访问成功，数据赋值
       this.MenuList = data.data
-      //console.log(this.MenuList)
+      // console.log(this.MenuList)
     },
 
     // 切换点击
@@ -76,6 +77,7 @@ export default {
 
     // 二级菜单的点击
     navclick(activepath) {
+      // 保存被点击的路径
       this.activeNav = activepath
       window.sessionStorage.setItem('activepath', activepath)
     },
