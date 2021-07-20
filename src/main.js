@@ -10,6 +10,8 @@ import '@/plugins/element.js'
 import 'assets/font/iconfont.css'
 // 初始化
 import('assets/css/base.css')
+// 引入插件
+import '@/plugins/vue-table-with-tree.js'
 
 Vue.config.productionTip = false
 
