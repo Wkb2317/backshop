@@ -10,42 +10,23 @@ const Users = () => import('views/Users/Users.vue')
 const Rights = () => import('views/Power/Rights.vue')
 const Roles = () => import('views/Power/Roles.vue')
 const GoodsList = () => import('views/Goods/GoodsList.vue')
+const Params = () => import('views/Goods/Params.vue')
 
 const routes = [
-  {
-    path: '/login',
-    component: Login
-  },
-  {
-    path: '/',
-    redirect: '/login'
-  },
+  { path: '/login', component: Login },
+  { path: '/', redirect: '/login' },
   {
     path: '/home',
+    component: Home,
     // 进到home，就显示welcome界面
     redirect: '/welcome',
-    component: Home,
     children: [
-      {
-        path: '/welcome',
-        component: Welcome
-      },
-      {
-        path: '/users',
-        component: Users
-      },
-      {
-        path: '/rights',
-        component: Rights
-      },
-      {
-        path: '/roles',
-        component: Roles
-      },
-      {
-        path: '/categories',
-        component: GoodsList
-      }
+      { path: '/welcome', component: Welcome },
+      { path: '/users', component: Users },
+      { path: '/rights', component: Rights },
+      { path: '/roles', component: Roles },
+      { path: '/categories', component: GoodsList },
+      { path: '/params', component: Params }
     ]
   }
 ]

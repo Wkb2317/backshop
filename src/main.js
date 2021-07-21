@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+// 初始化axios
 import '@/network/axios.js'
 // 引入element自定义组件
 import '@/plugins/element.js'
