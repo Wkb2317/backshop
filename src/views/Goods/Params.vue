@@ -28,7 +28,17 @@
           <el-button @click="addDialogVisible = true" type="primary" :disabled="isDisable">添加参数</el-button>
           <!-- 动态参数表格 -->
           <el-table :data="manyTableData" border stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <!-- 动态参数的下拉 -->
+              <template slot-scope="scope">
+                <el-tag @close="tagClose(scope.row,index)" v-for="(item,index) in scope.row.attr_vals" :key="index" closable>
+                  {{item}}
+                </el-tag>
+                <el-input class="new-tag-input" v-if="scope.row.inputVisible" v-model="scope.row.inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm(scope.row)" @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="参数" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
@@ -39,12 +49,23 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
+
         <!-- 静态属性标签页 -->
         <el-tab-pane label="静态属性" name="only">
           <el-button @click="addDialogVisible = true" type="primary" :disabled="isDisable">添加属性</el-button>
           <!-- 静态属性表格 -->
           <el-table :data="onlyTableData" border stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <!-- 静态属性的下拉 -->
+              <template slot-scope="scope">
+                <el-tag @close="tagClose(scope.row,index)" v-for="(item,index) in scope.row.attr_vals" :key="index" closable>
+                  {{item}}
+                </el-tag>
+                <el-input class="new-tag-input" v-if="scope.row.inputVisible" v-model="scope.row.inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm(scope.row)" @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="属性" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
@@ -83,6 +104,7 @@
         <el-button type="primary" @click="editParams">确 定</el-button>
       </span>
     </el-dialog>
+
   </div>
 </template>
 <script>
@@ -129,6 +151,7 @@ export default {
           { required: true, message: '请输入参数名称', trigger: 'blur' },
         ],
       },
+      //
     }
   },
   created() {
@@ -175,10 +198,12 @@ export default {
       // 判断是不是三级
       if (this.selectedCate.length !== 3) {
         this.selectedCate = []
+        this.manyTableData = []
+        this.onlyTableData = []
         return
       }
       // 是三级
-      console.log(this.selectedCate)
+
       // 调用请求参数列表数据
       this.getParamsData()
     },
@@ -193,10 +218,21 @@ export default {
       if (data.meta.status !== 200) {
         return this.$message.error('获取数据失败')
       }
+
+      //先对数据进行处理
+      data.data.forEach((item) => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        // 为每个元素添加控制 new tag的属性
+        item.inputVisible = false
+        item.inputValue = ''
+      })
+
       // 判断是动态数据还是静态数据
       if (this.activeName == 'many') {
         this.manyTableData = data.data
+        // console.log(this.manyTableData)
       } else {
+        // console.log(data.data)
         this.onlyTableData = data.data
       }
     },
@@ -216,7 +252,6 @@ export default {
     addParams() {
       // 先进行表单的验证
       this.$refs.addFormRef.validate(async (res) => {
-        console.log(res)
         if (!res) {
           return this.$message.error('格式错误')
         }
@@ -248,9 +283,6 @@ export default {
     showEditDialog(row) {
       // 展示前获取本行的信息
       this.editForm = row
-      // this.$http.get(`categories/${}}/attributes/:attrId`, {
-      //   attr_sel: this.activeName,
-      // })
       this.editDialogVisible = true
     },
 
@@ -284,7 +316,7 @@ export default {
       })
     },
 
-    // 删除
+    // 删除参数或属性
     deleteParams(row) {
       this.editForm = row
       this.$confirm('此操作将永久删除该属性, 是否继续?', '提示', {
@@ -293,7 +325,7 @@ export default {
         type: 'warning',
       })
         .then(async () => {
-          console.log(this.editForm)
+          // console.log(this.editForm)
           // 确认删除
           let { data } = await this.$http.delete(
             `categories/${this.editForm.cat_id}/attributes/${this.editForm.attr_id}`
@@ -309,6 +341,55 @@ export default {
           this.$message.error('取消删除')
         })
     },
+
+    // 当失去焦点 或者 按下 enter 时 input 隐藏
+    handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      // 将输入的值push到数组中，然后发起请求
+      row.attr_vals.push(row.inputValue.trim())
+      // 调用保存函数
+      this.saveAttrVals()
+    },
+
+    // 保存attr_vals的值
+    async saveAttrVals(row) {
+      let { data } = await this.$http.put(
+        `categories/${row.cat_id}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: this.activeName,
+          attr_vals: row.attr_vals.join(' '),
+        }
+      )
+
+      if (data.meta.status !== 200) {
+        return this.$message.error('添加失败')
+      }
+      this.$message.success('添加成功')
+      row.inputValue = ''
+      row.inputVisible = false
+    },
+
+    // 展示new tag 的输入框
+    showInput(row) {
+      row.inputVisible = true
+      // $nextTick 当页面元素重新渲染的时候，才会执行里面的回调函数
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+
+    // 删除tag事件
+    tagClose(row, index) {
+      //删除索引为index的元素
+      row.attr_vals.splice(index, 1)
+      // 调用保存函数
+      this.saveAttrVals(row)
+    },
   },
 }
 </script>
@@ -319,5 +400,13 @@ export default {
 
 .el-button {
   margin-bottom: 15px;
+}
+
+.el-tag {
+  margin-right: 10px;
+}
+
+.new-tag-input {
+  width: 120px;
 }
 </style>
