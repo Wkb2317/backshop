@@ -9,8 +9,10 @@ const Welcome = () => import('components/HomeChilds/Welcome.vue')
 const Users = () => import('views/Users/Users.vue')
 const Rights = () => import('views/Power/Rights.vue')
 const Roles = () => import('views/Power/Roles.vue')
-const GoodsList = () => import('views/Goods/GoodsList.vue')
+const Cate = () => import('views/Goods/Cate.vue')
 const Params = () => import('views/Goods/Params.vue')
+const List = () => import('views/Goods/List.vue')
+const Add = () => import('views/Goods/Add.vue')
 
 const routes = [
   { path: '/login', component: Login },
@@ -25,8 +27,10 @@ const routes = [
       { path: '/users', component: Users },
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
-      { path: '/categories', component: GoodsList },
-      { path: '/params', component: Params }
+      { path: '/categories', component: Cate },
+      { path: '/params', component: Params },
+      { path: '/goods', component: List },
+      { path: '/goods/add', component: Add }
     ]
   }
 ]

@@ -13,7 +13,8 @@ import 'assets/font/iconfont.css'
 import('assets/css/base.css')
 // 引入插件
 import '@/plugins/vue-table-with-tree.js'
-
+// 引入编辑器的插件
+import '@/plugins/vue-quill-editor.js'
 Vue.config.productionTip = false
 
 new Vue({

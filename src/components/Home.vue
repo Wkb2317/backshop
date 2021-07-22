@@ -32,7 +32,7 @@ export default {
 }
 
 .el-header {
-  background-color: rgba(36, 172, 242);
+  background-color: rgba(64, 158, 255);
   color: white;
 }
 </style>
