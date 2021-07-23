@@ -48,6 +48,7 @@
   </div>
 </template>
 <script>
+import { formDate } from '@/common/utils.js'
 export default {
   name: 'List',
   data() {
@@ -69,18 +70,6 @@ export default {
     this.getGoodsList()
   },
   methods: {
-    // 格式化时间
-    formDate(date) {
-      let newdate = new Date(date)
-      let year = newdate.getFullYear()
-      let month = newdate.getMonth() + 1
-      let day = newdate.getDate()
-      let hour = newdate.getHours()
-      let min = newdate.getMinutes()
-      let s = newdate.getSeconds()
-      return `${year}-${month}-${day} ${hour}-${min}-${s}`
-    },
-
     // 请求商品列表信息
     async getGoodsList() {
       let { data } = await this.$http.get('goods', { params: this.queryInfo })
@@ -89,7 +78,7 @@ export default {
       }
       // 时间戳转换
       data.data.goods.forEach((item) => {
-        item.add_time = this.formDate(item.add_time)
+        item.add_time = formDate(item.add_time)
       })
 
       this.goodsList = data.data.goods

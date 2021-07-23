@@ -27,3 +27,8 @@ body,
 .ql-editor {
   min-height: 300px;
 }
+
+/* 分页器 */
+.el-pagination {
+  margin-top: 15px;
+}
